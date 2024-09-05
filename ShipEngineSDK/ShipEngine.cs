@@ -18,6 +18,14 @@ namespace ShipEngineSDK
     /// </summary>
     public partial interface IShipEngine
     {
+
+        /// <summary>
+        /// The address-recognition API makes it easy for you to extract address data from unstructured text, including the recipient name, line 1, line 2, city, postal code, and more.
+        /// </summary>
+        /// <param name="parseAddressParams"> The params to parse address.</param>
+        /// <returns>An parsed address result object</returns>
+        Task<Models.Dto.ParseAddress.Result> ParseAddress(Models.Dto.ParseAddress.Params parseAddressParams);
+
         /// <summary>
         /// Validates an address in nearly any country in the world.
         /// </summary>
@@ -267,6 +275,23 @@ namespace ShipEngineSDK
         public void Dispose()
         {
             _client.Dispose();
+        }
+
+
+        /// <summary>
+        /// Parses text for an address.
+        /// </summary>
+        /// <param name="parseAddressParams">The address to parse. This can even be an incomplete or improperly formatted address</param>
+        /// <returns>An address parse result object</returns>
+        public async Task<Models.Dto.ParseAddress.Result> ParseAddress(Models.Dto.ParseAddress.Params parseAddressParams)
+        {
+            var path = "v1/addresses/recognize";
+
+            string paramString = JsonSerializer.Serialize(parseAddressParams, JsonSerializerOptions);
+
+            var parsedAddress = await SendHttpRequestAsync<Models.Dto.ParseAddress.Result>(HttpMethod.Put, path, paramString, _client, _config);
+
+            return parsedAddress;
         }
 
         /// <summary>
